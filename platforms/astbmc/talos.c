@@ -58,6 +58,15 @@ static bool talos_probe(void)
 	return true;
 }
 
+static void talos_exit(void)
+{
+	/* Let the IPL Observer know that we're done */
+	lpc_probe_write(OPAL_LPC_IO, 0x81, 0xfe, 1);
+	lpc_probe_write(OPAL_LPC_IO, 0x82, 0xfe, 1);
+
+	astbmc_exit();
+}
+
 DECLARE_PLATFORM(talos) = {
 	.name			= "Talos",
 	.probe			= talos_probe,
@@ -70,7 +79,7 @@ DECLARE_PLATFORM(talos) = {
 	.cec_power_down         = astbmc_ipmi_power_down,
 	.cec_reboot             = astbmc_ipmi_reboot,
 	.elog_commit		= ipmi_elog_commit,
-	.exit			= astbmc_exit,
+	.exit			= talos_exit,
 	.terminate		= ipmi_terminate,
 	.op_display		= op_display_lpc,
 };
